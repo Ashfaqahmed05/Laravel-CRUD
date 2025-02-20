@@ -55,9 +55,10 @@
                             </div>
                             <div class= "mb-3">
                                 <label for="" class="form-label h4">Image:</label>
-                                <input type="file" class="form-control form-control-lg" name="image">
+                                <input type="file" class="form-control form-control-lg"
+                                 name="image" onchange="document.querySelector('#outputImg').src=window.URL.createObjectURL(this.files[0])">
                                 @if ($product->image != '')
-                                    <img class="w-50" src="{{ asset('uploads/products/' . $product->image) }}"
+                                    <img id="outputImg" class="w-50 my-3" src="{{ asset('uploads/products/' . $product->image) }}"
                                         alt="image">
                                 @endif
                             </div>

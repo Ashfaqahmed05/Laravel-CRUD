@@ -10,9 +10,14 @@ use App\Models\Product;
 class productController extends Controller {
     // This method will show products page
 
-    public function index() {
-        $products = Product::orderBy( 'created_at', 'DESC' )->get();
-        return view( 'products.list', [ 'products'=> $products ] );
+    public function index(Request $request) {
+        $search = $request->input('search', '');
+    
+        $products = Product::when($search, function ($query, $search) {
+            return $query->where('name', 'like', "%$search%");
+        })->orderBy('created_at', 'DESC')->get();
+    
+        return view('products.list', ['products' => $products]);
     }
 
     // This method will show create product page
@@ -46,15 +51,13 @@ class productController extends Controller {
         $product->sku = $request->sku;
         $product->price = $request->price;
         $product->description = $request->description;
-        $product->name = $request->name;
         $product->save();
 
         if ( $request->image != '' ) {
             // Here store image
             $image = $request->image;
             $ext = $image->getClientOriginalExtension();
-            $imageName = time().'.'.$ext;
-            //unique image name
+            $imageName = time().'.'.$ext;  //unique image name
 
             // Save image to public directory
             $image->move( public_path( 'uploads/products' ), $imageName );
